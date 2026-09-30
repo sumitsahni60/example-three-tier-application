@@ -4,6 +4,8 @@ const db = require('./db');
 const app = express();
 const PORT = process.env.PORT || 3001;
 
+const TITLE_MAX_LENGTH = 500;
+
 app.use(express.json());
 
 app.get('/health', (_req, res) => {
@@ -19,9 +21,20 @@ app.get('/tasks', async (_req, res) => {
 // POST /tasks — create a task
 app.post('/tasks', async (req, res) => {
   const { title } = req.body;
-  if (!title || typeof title !== 'string' || !title.trim()) {
+
+  if (title === undefined || title === null) {
     return res.status(400).json({ error: 'title is required' });
   }
+  if (typeof title !== 'string') {
+    return res.status(400).json({ error: 'title must be a string' });
+  }
+  if (!title.trim()) {
+    return res.status(400).json({ error: 'title must not be blank' });
+  }
+  if (title.trim().length > TITLE_MAX_LENGTH) {
+    return res.status(400).json({ error: `title must be ${TITLE_MAX_LENGTH} characters or fewer` });
+  }
+
   const { rows } = await db.query(
     'INSERT INTO tasks (title) VALUES ($1) RETURNING *',
     [title.trim()]
@@ -32,7 +45,23 @@ app.post('/tasks', async (req, res) => {
 // PATCH /tasks/:id — update a task (complete/uncomplete or rename)
 app.patch('/tasks/:id', async (req, res) => {
   const id = parseInt(req.params.id, 10);
+  if (!Number.isInteger(id) || id <= 0) {
+    return res.status(400).json({ error: 'id must be a positive integer' });
+  }
+
   const { completed, title } = req.body;
+
+  if (title !== undefined) {
+    if (typeof title !== 'string') {
+      return res.status(400).json({ error: 'title must be a string' });
+    }
+    if (!title.trim()) {
+      return res.status(400).json({ error: 'title must not be blank' });
+    }
+    if (title.trim().length > TITLE_MAX_LENGTH) {
+      return res.status(400).json({ error: `title must be ${TITLE_MAX_LENGTH} characters or fewer` });
+    }
+  }
 
   const { rows } = await db.query('SELECT * FROM tasks WHERE id = $1', [id]);
   if (rows.length === 0) return res.status(404).json({ error: 'Not found' });
@@ -51,3 +80,5 @@ app.patch('/tasks/:id', async (req, res) => {
 app.listen(PORT, () => {
   console.log(`API listening on port ${PORT}`);
 });
+
+module.exports = app;
