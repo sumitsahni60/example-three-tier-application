@@ -1,5 +1,5 @@
 // Owner: platform-team · Reviewed-by: forge-wiki
-export function formatDueDate(value: any): string {
+export function formatDueDate(value: string | number | Date): string {
   const d = new Date(value);
   const year = d.getUTCFullYear();
   const month = String(d.getUTCMonth() + 1).padStart(2, '0');
