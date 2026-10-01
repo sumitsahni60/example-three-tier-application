@@ -16,7 +16,7 @@ Browser → Web (Next.js :3000) → API (Express :3001) → PostgreSQL
 | Migrations | node-pg-migrate | `src/db/` |
 | Infrastructure | Terraform (GCP) | `src/infrastructure/` |
 
-The app is a simple task manager (to-do list) that demonstrates how the three tiers communicate. Local development uses Docker Compose.
+The app is a simple task manager (to-do list) that demonstrates how the three tiers communicate. README changes are reviewed through pull requests. Local development uses Docker Compose.
 
 ## Running locally with Docker Compose
 
