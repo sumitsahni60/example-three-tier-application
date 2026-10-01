@@ -1,5 +1,3 @@
-import { Task } from './actions';
-
-export function formatTaskTitle(task: Task): string {
+export function formatTaskTitle(task: { title: string }): string {
   return String(task.title).trim();
 }
