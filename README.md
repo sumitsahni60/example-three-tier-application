@@ -130,3 +130,14 @@ DATABASE_URL=postgres://app:app@localhost:5432/app npx node-pg-migrate down
 ```
 
 When running via Docker Compose the `migrate` service handles this automatically on startup.
+
+## API syntax checks
+
+Developers can quickly verify that the API JavaScript files are free of syntax errors without installing any dependencies by using Node.js's built-in `--check` flag. Run the following commands from the repository root:
+
+```bash
+node --check src/api/index.js
+node --check src/api/db.js
+```
+
+Each command parses the file and exits with a non-zero status code if a syntax error is found, or silently succeeds if the file is valid. No modules are loaded and no server is started.
